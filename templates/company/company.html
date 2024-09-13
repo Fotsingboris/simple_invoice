@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+    <div class="content-wrapper">
+        <div class="page-header">
+            <h3 class="page-title">
+                <span class="page-title-icon bg-gradient-primary text-white me-2">
+                    <i class="mdi mdi-home"></i>
+                </span> Compnay Informtion
+            </h3>
+            <nav aria-label="breadcrumb">
+                <ul class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        {% if company %}
+
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Company Information</h4>
+                        <p class="card-description">Company Information</p>
+                        <form method="post" action="{% url 'company:company' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" name="id" value="{{ company.id }}">
+            
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" name="name" id="name" placeholder="Name" value="{{ company.name }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email address</label>
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Email" value="{{ company.email }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" class="form-control" name="address" id="address" placeholder="Address" value="{{ company.address }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="image">Logo</label>
+                                <input type="file" class="form-control" id="image" name="image">
+                                {% if company.image %}
+                                    <img src="{{ company.image.url }}" alt="Company Logo" style="max-width: 100px; margin-top: 10px;">
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <label for="phone_number">Phone Number</label>
+                                <input type="number" class="form-control" id="phone_number" name="phone_number" placeholder="Phone Number" value="{{ company.phone_number }}">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-gradient-primary me-2">Update</button>
+                            <a href="{% url 'company:company' %}" class="btn btn-light">Cancel</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 grid-margin stretch-card">
+                <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Compnay Informtion</h4>
+                    <p class="card-description"> Compnay Informtion </p>
+                    <form method="post" action="{% url 'company:company' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="create">
+
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address </label>
+                        <input type="text" class="form-control" name="address" id="address" placeholder="address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="image">Logo </label>
+                        <input type="file" class="form-control" id="image" name="image" placeholder="image">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone_number">Phone Number</label>
+                        <input type="number" class="form-control" id="phone_number" name="phone_number" placeholder="697877876">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
+                    <button class="btn btn-light">Cancel</button>
+                    </form>
+                </div>
+                </div>
+            </div>
+        {% endif %}
+
+
+        
+        
+       
+    </div>
+{% endblock %}

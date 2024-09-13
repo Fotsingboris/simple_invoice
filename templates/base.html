@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include 'includes/_meta.html'%}
+
+
+  </head>
+  <body>
+    <div class="container-scroller">
+      {% comment %} {% include 'includes/buy.html'%} {% endcomment %}
+      <!-- partial:partials/_navbar.html -->
+      {% include 'includes/_header.html'%}
+
+      <!-- partial -->
+      <div class="container-fluid page-body-wrapper">
+        <!-- partial:partials/_sidebar.html -->
+        {% include 'includes/sidebar.html'%}
+        
+        <!-- partial -->
+        <div class="main-panel">
+          {% include "includes/_messages.html" %}
+
+          {% block content %}
+          
+          {% endblock %}
+          <!-- content-wrapper ends -->
+          <!-- partial:partials/_footer.html -->
+            {% include 'includes/_footer.html'%}
+          
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    {% include 'includes/_js.html'%}
+  </body>
+</html>

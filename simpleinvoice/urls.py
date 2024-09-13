@@ -24,7 +24,7 @@ from django.views import defaults as default_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('downlaod/',include('download.urls')),
+    path('',include('download.urls')),
 ]
 
 
