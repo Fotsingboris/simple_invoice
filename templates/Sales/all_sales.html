@@ -13,7 +13,8 @@
             <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
                     <li class="breadcrumb-item active" aria-current="page">
-                        <span></span>Overview <i class="mdi mdi-alert-circle-outline icon-sm text-primary align-middle"></i>
+                        <a href="{% url 'company:sales'  %}" class="btn btn-sm btn-primary">New Invoice</a>
+
                     </li>
                 </ul>
             </nav>
@@ -23,40 +24,42 @@
             <div class="card">
                 <div class="card-body">
                     <h4 class="card-title">All Sales</h4>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Invoice Number</th>
-                                <th>Products</th>
-                                <th>Total Amount</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for invoice in invoices %}
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
                                 <tr>
-                                    <td>{{ invoice.invoice_number }}</td>
-                                    <td>
-                                        <ul>
-                                            {% for item in invoice.items.all %}
-                                                <li>{{ item.product_name }}</li>
-                                            {% empty %}
-                                                <li>No products</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </td>
-                                    <td>${{ invoice.total_amount }}</td>
-                                    <td>
-                                        <a href="{% url 'company:download_pdf' invoice.id %}" class="btn btn-sm btn-primary">Download PDF</a>
-                                    </td>
+                                    <th>Invoice Number</th>
+                                    <th>Client</th>
+                                    <th>Phone</th>
+                                    <th>Quantity</th>
+                                    <th>Total Amount</th>
+                                    <th>Action</th>
                                 </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="3">No sales available</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for invoice in invoices %}
+                                    <tr>
+                                        <td>{{ invoice.invoice_number }}</td>
+                                        <td>{{ invoice.client_name }}</td>
+                                        <td>{{ invoice.client_phone }}</td>
+                                        <td>{{ invoice.total_quantity }}</td>
+                                    
+                                        <td>${{ invoice.total_price }}</td>
+                                        <td>
+                                            <a href="{% url 'company:update_invoice' invoice.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                            <a href="{% url 'company:reuse_invoice' invoice.id %}" class="btn btn-sm btn-info">Re-use</a>
+
+                                            <a href="{% url 'company:download_pdf' invoice.id %}" class="btn btn-sm btn-primary">Download PDF</a>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="3">No sales available</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

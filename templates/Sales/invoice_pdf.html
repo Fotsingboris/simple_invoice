@@ -2,54 +2,191 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invoice {{ invoice.invoice_number }}</title>
     <style>
-        /* Add your CSS styles here */
-        table {
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .invoice-container {
+            width: 70%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        .header img {
+            max-width: 150px;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .invoice-details {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .invoice-details p {
+            margin: 5px 0;
+        }
+
+        .info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align the items to the top of the row */
+            margin-bottom: 20px; /* Add some space below */
+        }
+        
+        .left, .right {
+            width: 48%; /* Adjust this if necessary */
+        }
+        
+        .right {
+            text-align: right; /* Align text to the right for the right column */
+        }
+        
+
+        .table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
-        th, td {
+
+        .table th, .table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
+            text-align: left;
         }
-        th {
+
+        .table th {
             background-color: #f2f2f2;
-        }
-        .total {
             font-weight: bold;
+        }
+
+        .table tfoot td {
+            font-weight: bold;
+        }
+
+        .total {
+            font-size: 20px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        .signature {
+            margin-top: 40px;
+            text-align: right;
+        }
+
+        .signature img {
+            width: 100px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .invoice-container {
+                width: 90%;
+            }
+
+            .info {
+                flex-direction: column; /* Stack sections vertically on smaller screens */
+            }
+
+            .info .left, .info .right {
+                width: 100%; /* Full width in smaller screens */
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Invoice {{ invoice.invoice_number }}</h1>
-    <p>Date: {{ current_date }}</p>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Product Name</th>
-                <th>Quantity</th>
-                <th>Unit Price</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in invoice_items %}
+    <div class="invoice-container">
+        <div class="header">
+            <!-- Placeholder for Company Logo -->
+            
+            {% comment %} <img src="{{ company.image.url }}" alt="Company Logo"> {% endcomment %}
+            <h1>Invoice</h1>
+        </div>
+        
+        <div class="invoice-details">
+            <p>Invoice Number: {{ invoice.invoice_number }}</p>
+            <p>Date: {{ current_date }}</p>
+        </div>
+
+        <div class="info">
+            <div class="left">
+                <h2>Company Info</h2>
+                <p>{{ company.name }}</p>
+                <p>{{ company.address }}</p>
+                <p>{{ company.phone_number }}</p>
+                <p>{{ company.email }}</p>
+            </div>
+            <div class="right">
+                <h2>Bill To</h2>
+                <p>{{ invoice.client_name }}</p>
+                <p>{{ invoice.client_email }}</p>
+                <p>{{ invoice.client_phone }}</p>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th>Qty</th>
+                    <th>Unit Price</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in invoice_items %}
                 <tr>
                     <td>{{ item.product_name }}</td>
                     <td>{{ item.quantity }}</td>
-                    <td>{{ item.unit_price }}</td>
+                    <td>${{ item.unit_price }}</td>
                     <td>${{ item.total_price }}</td>
                 </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td class="total">Total Amount</td>
-                <td class="total">${{ total_amount }}</td>
-            </tr>
-        </tfoot>
-    </table>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3" class="total">Total Amount</td>
+                    <td>${{ total_amount }}</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="footer">
+            <p>Payment is due within 30 days of project completion.</p>
+            <p>Contact us at {{ company.phone_number }} or {{ company.email }} for any queries.</p>
+        </div>
+
+        <div class="signature">
+            <p>______________________________</p>
+            <p>{{ invoice.client_name }}</p>
+        </div>
+    </div>
 </body>
 </html>

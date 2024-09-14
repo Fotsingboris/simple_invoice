@@ -8,7 +8,7 @@
             <h3 class="page-title">
                 <span class="page-title-icon bg-gradient-primary text-white me-2">
                     <i class="mdi mdi-home"></i>
-                </span> Create Invoice
+                </span> Reuse Invoice
             </h3>
             <nav aria-label="breadcrumb">
                 <ul class="breadcrumb">
@@ -29,23 +29,22 @@
                         <!-- Invoice Info -->
                         <div class="mb-3">
                             <label for="invoice_number" class="form-label">Invoice Number</label>
-                            <input type="text" class="form-control" id="invoice_number" name="invoice_number" value="{{ invoice_number }}" readonly>
+                            <input type="text" class="form-control" id="invoice_number" name="invoice_number" value="{{ invoice.invoice_number }}" readonly>
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
                                 <label for="client_name" class="form-label">Client Name</label>
-                                <input type="text" class="form-control" id="client_name" name="client_name" value="{{ client_name }}" >
+                                <input type="text" class="form-control" id="client_name" name="client_name" value="{{ invoice.client_name }}" >
                             </div>
                             <div class="mb-3 col-md-6">
                                 <label for="client_email" class="form-label">Client Email</label>
-                                <input type="email" class="form-control" id="client_email" name="client_email" value="{{ client_email }}" >
+                                <input type="email" class="form-control" id="client_email" name="client_email" value="{{ invoice.client_email }}" >
                             </div>
                         </div>
                         <div class="row">
-
                             <div class="mb-3 col-md-6">
                                 <label for="client_phone" class="form-label">Client Phone Number</label>
-                                <input type="number" class="form-control" id="client_phone" name="client_phone" value="{{ client_phone }}" >
+                                <input type="number" class="form-control" id="client_phone" name="client_phone" value="{{ invoice.client_phone }}" >
                             </div>
 
                             <div class="mb-3 col-md-6">
@@ -67,35 +66,31 @@
                                 </tr>
                             </thead>
                             <tbody id="product-rows">
+                                {% for item in invoice_items %}
                                 <tr class="product-row">
-                                    <td><input type="text" class="form-control" name="product_name[]" required></td>
-                                    <td><input type="number" class="form-control quantity" name="quantity[]" min="1" required></td>
-                                    <td><input type="number" class="form-control unit-price" name="unit_price[]" step="0.01" min="0" required></td>
+                                    <td><input type="text" class="form-control" name="product_name[]" value="{{ item.product_name }}" required></td>
+                                    <td><input type="number" class="form-control quantity" name="quantity[]" value="{{ item.quantity }}" min="1" required></td>
+                                    <td><input type="number" class="form-control unit-price" name="unit_price[]" value="{{ item.unit_price }}" step="0.01" min="0" required></td>
                                     <td><input type="text" class="form-control total-price" name="total_price[]" readonly></td>
-                                    <td><button type="button" class="btn btn-danger remove-row" disabled>&times;</button></td>
+                                    <td><button type="button" class="btn btn-danger remove-row" {% if forloop.first %}disabled{% endif %}>&times;</button></td>
                                 </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                         <button type="button" class="btn btn-primary" id="add-row">Add Product</button>
 
                         <div class="mt-4 text-center">
-                            <button type="submit" class="btn btn-success">Save Invoice</button>
+                            <button type="submit" class="btn btn-success">Create New Invoice</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
-
-        
-        
-       
     </div>
 
 {% endblock %}
 
-{% block scripts %} 
-     
+{% block scripts %}
     <script>
         $(document).ready(function() {
             // Function to update the total price based on quantity and unit price
@@ -141,4 +136,4 @@
             $('.remove-row').prop('disabled', true);
         });
     </script>
-      {% endblock  %}
+{% endblock %}

@@ -103,29 +103,92 @@ def all_sale(request):
 
 
 
+# def create_invoice(request):
+#     if request.method == 'POST':
+#         # Create the invoice
+#         invoice_number = request.POST.get('invoice_number')
+#         invoice_date = request.POST.get('date')
+        
+#         invoice = Invoice.objects.create(
+#             invoice_number=invoice_number,
+#             date=invoice_date,
+#         )
+        
+#         # Save each product row as an InvoiceItem
+#         product_names = request.POST.getlist('product_name[]')
+#         quantities = request.POST.getlist('quantity[]')
+#         unit_prices = request.POST.getlist('unit_price[]')
+
+#         for product_name, quantity, unit_price in zip(product_names, quantities, unit_prices):
+#             InvoiceItem.objects.create(
+#                 invoice=invoice,
+#                 product_name=product_name,
+#                 quantity=int(quantity),
+#                 unit_price=float(unit_price),
+#             )
+
+#         return redirect('company:sales')
+
+#     # For GET request, generate an invoice number and load form
+#     invoice_number = generate_invoice_number()
+#     today_date = date.today()
+
+#     return render(request, 'Sales/sales.html', {
+#         'invoice_number': invoice_number,
+#         'date': today_date,
+#     })
+
+
 def create_invoice(request):
     if request.method == 'POST':
         # Create the invoice
         invoice_number = request.POST.get('invoice_number')
+        client_name = request.POST.get('client_name')
+        client_email = request.POST.get('client_email')
+        client_phone = request.POST.get('client_phone')
         invoice_date = request.POST.get('date')
-        
-        invoice = Invoice.objects.create(
-            invoice_number=invoice_number,
-            date=invoice_date,
-        )
-        
+
         # Save each product row as an InvoiceItem
         product_names = request.POST.getlist('product_name[]')
         quantities = request.POST.getlist('quantity[]')
         unit_prices = request.POST.getlist('unit_price[]')
 
+        # Create the invoice first, with initial total_price and total_quantity as placeholders
+        invoice = Invoice.objects.create(
+            invoice_number=invoice_number,
+            client_name=client_name,
+            client_email=client_email,
+            client_phone=client_phone,
+            date=invoice_date,
+            total_price=0,  # to be updated later
+            total_quantity=0  # to be updated later
+        )
+
+        total_price = 0
+        distinct_products = set()  # To keep track of unique products
+
         for product_name, quantity, unit_price in zip(product_names, quantities, unit_prices):
+            quantity = int(quantity)
+            unit_price = float(unit_price)
+            total_price += quantity * unit_price  # Sum total price for the invoice
+            
+            # Save each product as an InvoiceItem
             InvoiceItem.objects.create(
                 invoice=invoice,
                 product_name=product_name,
-                quantity=int(quantity),
-                unit_price=float(unit_price),
+                quantity=quantity,
+                unit_price=unit_price
             )
+
+            # Add product name to distinct_products to calculate total_quantity
+            distinct_products.add(product_name)
+
+        # Update the invoice with the final total_price and total_quantity
+        invoice.total_price = total_price
+        invoice.total_quantity = len(distinct_products)
+        invoice.save()
+        messages.success(request, _('Invoice created successfully'))
+        
 
         return redirect('company:sales')
 
@@ -142,6 +205,7 @@ def create_invoice(request):
 def download_invoice_pdf(request, id):
     invoice = get_object_or_404(Invoice, id=id)
     invoice_items = invoice.items.all()
+    company = CompanyInformation.objects.first()    
 
     # Calculate the total amount
     total_amount = sum(item.total_price for item in invoice_items)
@@ -150,6 +214,7 @@ def download_invoice_pdf(request, id):
         'invoice': invoice,
         'invoice_items': invoice_items,
         'total_amount': total_amount,
+        'company': company,
         'current_date': date.today().strftime('%d/%m/%Y'),
     }
 
@@ -160,3 +225,115 @@ def download_invoice_pdf(request, id):
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Invoice_{invoice.invoice_number}.pdf"'
     return response
+
+
+
+def update_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+
+    if request.method == 'POST':
+        # Update the invoice details
+        invoice.invoice_number = request.POST.get('invoice_number')
+        invoice.client_name = request.POST.get('client_name')
+        invoice.client_email = request.POST.get('client_email')
+        invoice.client_phone = request.POST.get('client_phone')
+        invoice.date = request.POST.get('date')
+
+        # Remove the old invoice items and replace them with new ones
+        InvoiceItem.objects.filter(invoice=invoice).delete()
+
+        # Save updated product rows as new InvoiceItems
+        product_names = request.POST.getlist('product_name[]')
+        quantities = request.POST.getlist('quantity[]')
+        unit_prices = request.POST.getlist('unit_price[]')
+
+        total_price = 0
+        distinct_products = set()  # To keep track of unique products
+
+        for product_name, quantity, unit_price in zip(product_names, quantities, unit_prices):
+            quantity = int(quantity)
+            unit_price = float(unit_price)
+            total_price += quantity * unit_price  # Sum total price for the invoice
+
+            # Save each product as an InvoiceItem
+            InvoiceItem.objects.create(
+                invoice=invoice,
+                product_name=product_name,
+                quantity=quantity,
+                unit_price=unit_price
+            )
+
+            # Add product name to distinct_products to calculate total_quantity
+            distinct_products.add(product_name)
+
+        # Update the invoice with the final total_price and total_quantity
+        invoice.total_price = total_price
+        invoice.total_quantity = len(distinct_products)
+        invoice.save()
+
+        messages.success(request, _('Invoice updated successfully'))
+
+        return redirect('company:sales')
+
+    return render(request, 'Sales/update_invoice.html', {
+        'invoice': invoice,
+        'invoice_items': invoice.items.all(),  # Pass the related invoice items
+    })
+
+
+def reuse_invoice(request, invoice_id):
+    original_invoice = get_object_or_404(Invoice, id=invoice_id)
+    original_items = InvoiceItem.objects.filter(invoice=original_invoice)
+
+    if request.method == 'POST':
+        # Create the new invoice
+        new_invoice_number = generate_invoice_number()  # Ensure to implement this function
+        client_name = request.POST.get('client_name')
+        client_email = request.POST.get('client_email')
+        client_phone = request.POST.get('client_phone')
+        invoice_date = request.POST.get('date')
+
+        # Save the new invoice
+        new_invoice = Invoice.objects.create(
+            invoice_number=new_invoice_number,
+            client_name=client_name,
+            client_email=client_email,
+            client_phone=client_phone,
+            date=invoice_date,
+            total_price=0,  # to be updated later
+            total_quantity=0  # to be updated later
+        )
+
+        total_price = 0
+        distinct_products = set()  # To keep track of unique products
+
+        # Save each product row as an InvoiceItem for the new invoice
+        for item in original_items:
+            quantity = item.quantity
+            unit_price = item.unit_price
+            total_price += quantity * unit_price  # Sum total price for the invoice
+            
+            # Create a new InvoiceItem for the new invoice
+            InvoiceItem.objects.create(
+                invoice=new_invoice,
+                product_name=item.product_name,
+                quantity=quantity,
+                unit_price=unit_price
+            )
+
+            # Add product name to distinct_products to calculate total_quantity
+            distinct_products.add(item.product_name)
+
+        # Update the new invoice with the final total_price and total_quantity
+        new_invoice.total_price = total_price
+        new_invoice.total_quantity = len(distinct_products)
+        new_invoice.save()
+
+        messages.success(request, 'Invoice reused and created successfully')
+        return redirect('company:sales')
+
+    return render(request, 'Sales/resuse_sale.html', {
+        'invoice': original_invoice,
+        'invoice_items': original_items,
+        'date': date.today()
+    })
