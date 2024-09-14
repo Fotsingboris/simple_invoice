@@ -47,12 +47,43 @@ def home(request):
     else:
         best_day_date = None
         best_day_sales = 0
+    
+    # Sales per Month
+    current_year = today.year
+    month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+    monthly_sales = Invoice.objects.filter(date__year=current_year) \
+        .values('date__month') \
+        .annotate(total_sales=Sum('total_price')) \
+        .order_by('date__month')
+
+    monthly_sales_data = [0] * 12
+    for entry in monthly_sales:
+        month_index = entry['date__month'] - 1
+        monthly_sales_data[month_index] = entry['total_sales']
+
+    # Sales per Weekday
+    sales_per_weekday = Invoice.objects.filter(date__range=[start_of_week, end_of_week]) \
+        .values('date') \
+        .annotate(total_sales=Sum('total_price')) \
+        .order_by('date')
+
+    weekly_sales_data = [0] * 7
+    for sale in sales_per_weekday:
+        weekday = sale['date'].weekday()
+        weekly_sales_data[weekday] += sale['total_sales']
+
+    weekday_labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
 
     context = {
         'weekly_sales': weekly_sales,
         'weekly_orders': weekly_orders,
         'best_day_date': best_day_date,
         'best_day_sales': best_day_sales,
+        'monthly_sales_data': monthly_sales_data,
+        'weekly_sales_data': weekly_sales_data,
+        'month_names': month_names,
+        'weekday_labels': weekday_labels,
     }
 
     return render(request, 'includes/main.html', context)
@@ -145,7 +176,7 @@ def create_invoice(request):
         client_name = request.POST.get('client_name')
         client_email = request.POST.get('client_email')
         client_phone = request.POST.get('client_phone')
-        invoice_date = request.POST.get('date')
+        # invoice_date = request.POST.get('date')
 
         # Save each product row as an InvoiceItem
         product_names = request.POST.getlist('product_name[]')
@@ -158,7 +189,7 @@ def create_invoice(request):
             client_name=client_name,
             client_email=client_email,
             client_phone=client_phone,
-            date=invoice_date,
+            # date=invoice_date,
             total_price=0,  # to be updated later
             total_quantity=0  # to be updated later
         )

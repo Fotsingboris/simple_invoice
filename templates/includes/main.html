@@ -56,9 +56,8 @@
                     <div class="card-body">
                         <div class="clearfix">
                             <h4 class="card-title float-start">Visit And Sales Statistics</h4>
-                            <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-end"></div>
+                            <canvas id="monthly-sales-chart"></canvas>
                         </div>
-                        <canvas id="visit-sale-chart" class="mt-4"></canvas>
                     </div>
                 </div>
             </div>
@@ -67,12 +66,90 @@
                     <div class="card-body">
                         <h4 class="card-title">Traffic Sources</h4>
                         <div class="doughnutjs-wrapper d-flex justify-content-center">
-                            <canvas id="traffic-chart"></canvas>
+                            <canvas id="weekly-sales-chart"></canvas>
                         </div>
-                        <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Monthly Sales Chart (Bar Chart)
+    const monthlySalesCtx = document.getElementById('monthly-sales-chart').getContext('2d');
+    const monthlySalesChart = new Chart(monthlySalesCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ month_names|safe }},  <!-- Using month names here -->
+            datasets: [{
+                label: 'Sales',
+                data: {{ monthly_sales_data|safe }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Weekly Sales Chart (Doughnut Chart)
+    const weeklySalesCtx = document.getElementById('weekly-sales-chart').getContext('2d');
+    const weeklySalesChart = new Chart(weeklySalesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ weekday_labels|safe }},
+            datasets: [{
+                label: 'Sales',
+                data: {{ weekly_sales_data|safe }},
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                    'rgba(255, 99, 132, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return ' $' + tooltipItem.raw.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
