@@ -9,11 +9,11 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            {% comment %} background-color: #f4f4f4; {% endcomment %}
         }
 
         .invoice-container {
-            width: 70%;
+            width: 75%;
             margin: 0 auto;
             background-color: #fff;
             padding: 20px;
@@ -125,8 +125,13 @@
     <div class="invoice-container">
         <div class="header">
             <!-- Placeholder for Company Logo -->
+            {% if company.image %}
             
-            {% comment %} <img src="{{ company.image.url }}" alt="Company Logo"> {% endcomment %}
+                <img src="{{ company.image.url }}" alt="Company Logo">
+            {% endif %}
+            
+            {% comment %} <img src="https://raw.githubusercontent.com/donaldte/ecommerce-django/main/image%20lgo.jpg" alt="School Logo"> <!-- Use hosted image --> {% endcomment %}
+
             <h1>Invoice</h1>
         </div>
         

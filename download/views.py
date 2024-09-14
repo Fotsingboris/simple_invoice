@@ -1,6 +1,8 @@
 from datetime import date
 import logging
 import pdfkit
+from weasyprint import HTML
+
 
 from django.shortcuts import get_object_or_404, render
 from django.views import View
@@ -249,8 +251,12 @@ def download_invoice_pdf(request, id):
     }
 
     template = get_template('Sales/invoice_pdf.html')
-    html = template.render(context)
-    pdf = pdfkit.from_string(html, False)
+    # html = template.render(context)
+    # pdf = pdfkit.from_string(html, False)
+    html_content = template.render(context)
+    
+    # Generate the PDF using WeasyPrint
+    pdf = HTML(string=html_content).write_pdf()
     
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="Invoice_{invoice.invoice_number}.pdf"'
