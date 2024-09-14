@@ -13,6 +13,9 @@ from .models import *
 from django.contrib import messages
 from datetime import date
 from django.http import HttpResponse
+from django.db.models import Sum, Count
+from django.utils import timezone
+from datetime import timedelta
 
 
 
@@ -21,7 +24,38 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 def home(request):
-    return render(request, 'includes/main.html')
+    today = timezone.now().date()
+    start_of_week = today - timedelta(days=today.weekday())
+    end_of_week = start_of_week + timedelta(days=6)
+
+    # Weekly Sales
+    weekly_sales = Invoice.objects.filter(date__range=[start_of_week, end_of_week]).aggregate(total_sales=Sum('total_price'))['total_sales'] or 0
+
+    # Weekly Orders
+    weekly_orders = Invoice.objects.filter(date__range=[start_of_week, end_of_week]).count()
+
+    # Day with Best Sale
+    sales_per_day = Invoice.objects.filter(date__range=[start_of_week, end_of_week]) \
+        .values('date') \
+        .annotate(total_sales=Sum('total_price')) \
+        .order_by('-total_sales')
+    
+    if sales_per_day:
+        best_day = sales_per_day[0]
+        best_day_date = best_day['date']
+        best_day_sales = best_day['total_sales']
+    else:
+        best_day_date = None
+        best_day_sales = 0
+
+    context = {
+        'weekly_sales': weekly_sales,
+        'weekly_orders': weekly_orders,
+        'best_day_date': best_day_date,
+        'best_day_sales': best_day_sales,
+    }
+
+    return render(request, 'includes/main.html', context)
 
 
 class CompanyInformationView(View):
@@ -102,41 +136,6 @@ def all_sale(request):
     return render(request, 'Sales/all_sales.html', context)
 
 
-
-# def create_invoice(request):
-#     if request.method == 'POST':
-#         # Create the invoice
-#         invoice_number = request.POST.get('invoice_number')
-#         invoice_date = request.POST.get('date')
-        
-#         invoice = Invoice.objects.create(
-#             invoice_number=invoice_number,
-#             date=invoice_date,
-#         )
-        
-#         # Save each product row as an InvoiceItem
-#         product_names = request.POST.getlist('product_name[]')
-#         quantities = request.POST.getlist('quantity[]')
-#         unit_prices = request.POST.getlist('unit_price[]')
-
-#         for product_name, quantity, unit_price in zip(product_names, quantities, unit_prices):
-#             InvoiceItem.objects.create(
-#                 invoice=invoice,
-#                 product_name=product_name,
-#                 quantity=int(quantity),
-#                 unit_price=float(unit_price),
-#             )
-
-#         return redirect('company:sales')
-
-#     # For GET request, generate an invoice number and load form
-#     invoice_number = generate_invoice_number()
-#     today_date = date.today()
-
-#     return render(request, 'Sales/sales.html', {
-#         'invoice_number': invoice_number,
-#         'date': today_date,
-#     })
 
 
 def create_invoice(request):
