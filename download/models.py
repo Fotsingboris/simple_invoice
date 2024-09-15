@@ -1,8 +1,10 @@
 from django.db import models
 
+from clients.models import BaseModel
+
 # Create your models here.
 
-class CompanyInformation(models.Model):
+class CompanyInformation(BaseModel):
     name = models.CharField(max_length=255)
     address = models.TextField()
     phone_number = models.CharField(max_length=20, blank=True, null=True)
@@ -13,7 +15,7 @@ class CompanyInformation(models.Model):
         return self.name
 
 
-class Invoice(models.Model):
+class Invoice(BaseModel):
     invoice_number = models.CharField(max_length=50, unique=True)
     client_name = models.CharField(max_length=255)
     client_email = models.EmailField(blank=True, null=True)
@@ -31,7 +33,7 @@ class Invoice(models.Model):
         return f'Invoice {self.invoice_number}'
 
 
-class InvoiceItem(models.Model):
+class InvoiceItem(BaseModel):
     invoice = models.ForeignKey('Invoice', related_name='items', on_delete=models.CASCADE)
     product_name = models.CharField(max_length=255)
     quantity = models.PositiveIntegerField()
