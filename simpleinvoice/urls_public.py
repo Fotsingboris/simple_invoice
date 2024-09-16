@@ -6,5 +6,7 @@ from django.views import defaults as default_views
 
 urlpatterns = [
     path('admin-tenant/', admin.site.urls),
-    path('',include('download.urls')),
+    # path('',include('download.urls')),
+    path('', include('clients.urls')),
+    
 ]

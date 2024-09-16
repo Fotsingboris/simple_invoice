@@ -206,7 +206,7 @@ def create_invoice(request):
             
             # Save each product as an InvoiceItem
             InvoiceItem.objects.create(
-                invoice=invoice,
+                invoice_id=invoice,
                 product_name=product_name,
                 quantity=quantity,
                 unit_price=unit_price
@@ -276,7 +276,7 @@ def update_invoice(request, invoice_id):
         invoice.date = request.POST.get('date')
 
         # Remove the old invoice items and replace them with new ones
-        InvoiceItem.objects.filter(invoice=invoice).delete()
+        InvoiceItem.objects.filter(invoice_id=invoice).delete()
 
         # Save updated product rows as new InvoiceItems
         product_names = request.POST.getlist('product_name[]')
@@ -293,7 +293,7 @@ def update_invoice(request, invoice_id):
 
             # Save each product as an InvoiceItem
             InvoiceItem.objects.create(
-                invoice=invoice,
+                invoice_id=invoice,
                 product_name=product_name,
                 quantity=quantity,
                 unit_price=unit_price
@@ -319,7 +319,7 @@ def update_invoice(request, invoice_id):
 
 def reuse_invoice(request, invoice_id):
     original_invoice = get_object_or_404(Invoice, id=invoice_id)
-    original_items = InvoiceItem.objects.filter(invoice=original_invoice)
+    original_items = InvoiceItem.objects.filter(invoice_id=original_invoice)
 
     if request.method == 'POST':
         # Create the new invoice
@@ -351,7 +351,7 @@ def reuse_invoice(request, invoice_id):
             
             # Create a new InvoiceItem for the new invoice
             InvoiceItem.objects.create(
-                invoice=new_invoice,
+                invoice_id=new_invoice,
                 product_name=item.product_name,
                 quantity=quantity,
                 unit_price=unit_price

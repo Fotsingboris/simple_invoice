@@ -13,7 +13,25 @@ import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
 from decouple import config
+from django.utils.translation import gettext_lazy as _
 
+
+
+SITE = {
+    "name": "HOOYIA Inc",
+    "organisation": "HOOYIA Inc",
+    "title": _("Enterprise Resource Planning"),
+    "_title": _("Invoice"),
+    "contact_number": "+237 6 91 43 54 85",
+    "support_email": "support@hooyiainvoice.com",
+    "contact_email": "contact@hooyiainvoice.com",
+    "address": "Yaoundé, Cameroun",
+    "instagram_url": "#",
+    "twitter_url": "#",
+    "facebook_url": "https://www.facebook.com/hooyia/",
+    "youtube_url": "#",
+    
+}
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -53,16 +71,13 @@ SHARED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "django.contrib.postgres",
-    'django.contrib.humanize',
-
-   
-        
-   
+    'django.contrib.humanize', 
+      
 )
 
 TENANT_APPS = (
     'download',
-  
+    
 )
 
 
