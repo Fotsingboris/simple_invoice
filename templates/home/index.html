@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -81,7 +82,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="https://via.placeholder.com/40" alt="Logo" style="border-radius:50%;">
+                {% comment %} <img src="{% static "images/logo/logo1.jpeg" %}" alt="Logo" style="border-radius:50%;"> {% endcomment %}
+                <img src="{% static 'images/logo/logo1.jpeg' %}" alt="Logo" style="border-radius:50%; width:60px; height:60px; object-fit:cover;">
+
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -118,7 +121,7 @@
                     <a href="#" class="btn btn-register">REGISTER</a>
                 </div>
                 <div class="col-md-6 text-center">
-                    <img src="https://via.placeholder.com/500" alt="Invoice Illustration" class="hero-image">
+                    <img src="{% static 'images/logo/logo2.jpeg' %}" alt="Invoice Illustration" class="hero-image">
                 </div>
             </div>
         </div>
@@ -129,17 +132,17 @@
             <h2 class="text-center">Our Features</h2>
             <div class="row">
                 <div class="col-md-4 text-center">
-                    <img src="https://via.placeholder.com/150" alt="Feature 1" class="img-fluid mb-3">
+                    <img src="{% static 'images/logo/invoice1.jpg' %}" alt="Feature 1" class="img-fluid mb-3">
                     <h4>Feature One</h4>
                     <p>Short description of feature one goes here. Highlight why it's important.</p>
                 </div>
                 <div class="col-md-4 text-center">
-                    <img src="https://via.placeholder.com/150" alt="Feature 2" class="img-fluid mb-3">
+                    <img src="{% static 'images/logo/invoice1.jpg' %}" alt="Feature 2" class="img-fluid mb-3">
                     <h4>Feature Two</h4>
                     <p>Short description of feature two goes here. Highlight why it's important.</p>
                 </div>
                 <div class="col-md-4 text-center">
-                    <img src="https://via.placeholder.com/150" alt="Feature 3" class="img-fluid mb-3">
+                    <img src="{% static 'images/logo/invoice1.jpg' %}" alt="Feature 3" class="img-fluid mb-3">
                     <h4>Feature Three</h4>
                     <p>Short description of feature three goes here. Highlight why it's important.</p>
                 </div>
