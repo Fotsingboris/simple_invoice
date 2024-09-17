@@ -3,7 +3,6 @@ import logging
 import pdfkit
 from weasyprint import HTML
 
-
 from django.shortcuts import get_object_or_404, render
 from django.views import View
 from django.shortcuts import render, redirect
@@ -18,9 +17,6 @@ from django.http import HttpResponse
 from django.db.models import Sum, Count
 from django.utils import timezone
 from datetime import timedelta
-
-
-
 
 logger = logging.getLogger(__name__)
 
