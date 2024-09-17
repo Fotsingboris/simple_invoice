@@ -38,13 +38,13 @@ def home(request):
 
     # Day with Best Sale
     sales_per_day = Invoice.objects.filter(date__range=[start_of_week, end_of_week]) \
-        .values('date') \
+        .values('created') \
         .annotate(total_sales=Sum('total_price')) \
         .order_by('-total_sales')
     
     if sales_per_day:
         best_day = sales_per_day[0]
-        best_day_date = best_day['date']
+        best_day_date = best_day['created']
         best_day_sales = best_day['total_sales']
     else:
         best_day_date = None
@@ -65,13 +65,13 @@ def home(request):
 
     # Sales per Weekday
     sales_per_weekday = Invoice.objects.filter(date__range=[start_of_week, end_of_week]) \
-        .values('date') \
+        .values('created') \
         .annotate(total_sales=Sum('total_price')) \
-        .order_by('date')
+        .order_by('created')
 
     weekly_sales_data = [0] * 7
     for sale in sales_per_weekday:
-        weekday = sale['date'].weekday()
+        weekday = sale['created'].weekday()
         weekly_sales_data[weekday] += sale['total_sales']
 
     weekday_labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -178,6 +178,7 @@ def create_invoice(request):
         client_name = request.POST.get('client_name')
         client_email = request.POST.get('client_email')
         client_phone = request.POST.get('client_phone')
+        date = request.POST.get('date')
         # invoice_date = request.POST.get('date')
 
         # Save each product row as an InvoiceItem
@@ -191,7 +192,7 @@ def create_invoice(request):
             client_name=client_name,
             client_email=client_email,
             client_phone=client_phone,
-            # date=invoice_date,
+            date=date,
             total_price=0,  # to be updated later
             total_quantity=0  # to be updated later
         )
@@ -225,12 +226,12 @@ def create_invoice(request):
         return redirect('company:sales')
 
     # For GET request, generate an invoice number and load form
-    invoice_number = generate_invoice_number()
-    today_date = date.today()
+    # invoice_number = generate_invoice_number()
+    # today_date = date.today()
 
     return render(request, 'Sales/sales.html', {
-        'invoice_number': invoice_number,
-        'date': today_date,
+        # 'invoice_number': invoice_number,
+        # 'date': today_date,
     })
 
 
@@ -371,5 +372,5 @@ def reuse_invoice(request, invoice_id):
     return render(request, 'Sales/resuse_sale.html', {
         'invoice': original_invoice,
         'invoice_items': original_items,
-        'date': date.today()
+        # 'date': date.today()
     })

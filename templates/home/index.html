@@ -104,7 +104,80 @@
                         <a class="nav-link" href="#">Contact</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="btn btn-signup">Sign Up</a>
+                        <a href="#" class="btn btn-signup" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</a>
+
+                        {% comment %} <a href="#" class="btn btn-signup">Sign Up</a> {% endcomment %}
+
+                        <!-- Sign Up Modal -->
+                            <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Wizard Form -->
+                                            <form id="wizardForm">
+                                                <!-- Step 1 -->
+                                                <div class="wizard-step" id="step1">
+                                                    <h4>Step 1: Basic Information</h4>
+                                                    <div class="mb-3">
+                                                        <label for="name" class="form-label">Name</label>
+                                                        <input type="text" class="form-control" id="name" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="email" class="form-label">Email</label>
+                                                        <input type="email" class="form-control" id="email" required>
+                                                    </div>
+                                                    <button type="button" class="btn btn-primary" id="nextStep1">Next</button>
+                                                </div>
+
+                                                <!-- Step 2 -->
+                                                <div class="wizard-step d-none" id="step2">
+                                                    <h4>Step 2: Address Information</h4>
+                                                    <div class="mb-3">
+                                                        <label for="address" class="form-label">Address</label>
+                                                        <input type="text" class="form-control" id="address" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="city" class="form-label">City</label>
+                                                        <input type="text" class="form-control" id="city" required>
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary" id="prevStep2">Previous</button>
+                                                    <button type="button" class="btn btn-primary" id="nextStep2">Next</button>
+                                                </div>
+
+                                                <!-- Step 3 -->
+                                                <div class="wizard-step d-none" id="step3">
+                                                    <h4>Step 3: Account Details</h4>
+                                                    <div class="mb-3">
+                                                        <label for="username" class="form-label">Username</label>
+                                                        <input type="text" class="form-control" id="username" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="password" class="form-label">Password</label>
+                                                        <input type="password" class="form-control" id="password" required>
+                                                    </div>
+                                                    <button type="button" class="btn btn-secondary" id="prevStep3">Previous</button>
+                                                    <button type="button" class="btn btn-primary" id="nextStep3">Next</button>
+                                                </div>
+
+                                                <!-- Step 4 -->
+                                                <div class="wizard-step d-none" id="step4">
+                                                    <h4>Step 4: Review & Confirm</h4>
+                                                    <p>Please review your information and click 'Submit' to complete the registration.</p>
+                                                    <!-- Display review information here if needed -->
+                                                    <button type="button" class="btn btn-secondary" id="prevStep4">Previous</button>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
                     </li>
                 </ul>
             </div>
@@ -159,6 +232,53 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nextStep1 = document.getElementById('nextStep1');
+            const prevStep2 = document.getElementById('prevStep2');
+            const nextStep2 = document.getElementById('nextStep2');
+            const prevStep3 = document.getElementById('prevStep3');
+            const nextStep3 = document.getElementById('nextStep3');
+            const prevStep4 = document.getElementById('prevStep4');
+    
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const step4 = document.getElementById('step4');
+    
+            nextStep1.addEventListener('click', () => {
+                step1.classList.add('d-none');
+                step2.classList.remove('d-none');
+            });
+    
+            prevStep2.addEventListener('click', () => {
+                step2.classList.add('d-none');
+                step1.classList.remove('d-none');
+            });
+    
+            nextStep2.addEventListener('click', () => {
+                step2.classList.add('d-none');
+                step3.classList.remove('d-none');
+            });
+    
+            prevStep3.addEventListener('click', () => {
+                step3.classList.add('d-none');
+                step2.classList.remove('d-none');
+            });
+    
+            nextStep3.addEventListener('click', () => {
+                step3.classList.add('d-none');
+                step4.classList.remove('d-none');
+            });
+    
+            prevStep4.addEventListener('click', () => {
+                step4.classList.add('d-none');
+                step3.classList.remove('d-none');
+            });
+        });
+    </script>
+    
+    
 </body>
 
 </html>

@@ -29,7 +29,7 @@
                         <!-- Invoice Info -->
                         <div class="mb-3">
                             <label for="invoice_number" class="form-label">Invoice Number</label>
-                            <input type="text" class="form-control" id="invoice_number" name="invoice_number" value="{{ invoice_number }}" readonly>
+                            <input type="text" class="form-control" id="invoice_number" name="invoice_number" value="{{ invoice_number }}">
                         </div>
                         <div class="row">
                             <div class="mb-3 col-md-6">
@@ -48,10 +48,10 @@
                                 <input type="number" class="form-control" id="client_phone" name="client_phone" value="{{ client_phone }}" >
                             </div>
 
-                            {% comment %} <div class="mb-3 col-md-6">
+                            <div class="mb-3 col-md-6">
                                 <label for="date" class="form-label">Date</label>
                                 <input type="date" class="form-control" id="date" name="date" value="{{ date }}">
-                            </div> {% endcomment %}
+                            </div>
                         </div>
 
                         <!-- Products Table -->

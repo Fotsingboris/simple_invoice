@@ -20,7 +20,7 @@ class Invoice(BaseModel):
     client_name = models.CharField(max_length=255)
     client_email = models.EmailField(blank=True, null=True)
     client_phone = models.IntegerField(blank=True, null=True)
-    date = models.DateField(auto_now_add=True)
+    date = models.DateField(blank=True, null=True)
     total_price = models.IntegerField(default=1)
     total_quantity = models.IntegerField(default=1)
     
