@@ -320,7 +320,9 @@ def reuse_invoice(request, invoice_id):
 
     if request.method == 'POST':
         # Create the new invoice
-        new_invoice_number = generate_invoice_number()  # Ensure to implement this function
+        # new_invoice_number = generate_invoice_number()  # Ensure to implement this function
+        invoice_number = request.POST.get('invoice_number')
+        
         client_name = request.POST.get('client_name')
         client_email = request.POST.get('client_email')
         client_phone = request.POST.get('client_phone')
@@ -328,7 +330,7 @@ def reuse_invoice(request, invoice_id):
 
         # Save the new invoice
         new_invoice = Invoice.objects.create(
-            invoice_number=new_invoice_number,
+            invoice_number=invoice_number,
             client_name=client_name,
             client_email=client_email,
             client_phone=client_phone,
